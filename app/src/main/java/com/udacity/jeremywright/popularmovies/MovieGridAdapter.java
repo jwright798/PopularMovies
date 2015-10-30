@@ -13,6 +13,7 @@ import java.util.List;
 
 /**
  * Created by jeremywright on 10/30/15.
+ *
  */
 public class MovieGridAdapter extends ArrayAdapter<MovieDO> {
 

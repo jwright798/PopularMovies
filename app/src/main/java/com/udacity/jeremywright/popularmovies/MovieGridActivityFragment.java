@@ -54,6 +54,8 @@ public class MovieGridActivityFragment extends Fragment {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
 
+
+        //Same style as weather app
         String oldSortType = sortType;
         int id = item.getItemId();
         if(id == R.id.sort_popularity){

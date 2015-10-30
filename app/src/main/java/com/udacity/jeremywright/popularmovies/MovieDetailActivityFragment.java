@@ -64,6 +64,8 @@ public class MovieDetailActivityFragment extends Fragment {
         TextView releaseDateTextView = (TextView)detailView.findViewById(R.id.release_date);
         releaseDateTextView.setText(prettyReleaseDate);
 
+
+        //Picasso snippit from implementation guide
         ImageView moviePoster = (ImageView)detailView.findViewById(R.id.movie_poster);
         String posterPath = BASE_POSTER_URL+movieDO.getPosterPath();
         Picasso.with(getActivity()).load(posterPath).into(moviePoster);
