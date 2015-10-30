@@ -29,7 +29,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Fragment that contains a gridview to display movies
  */
 public class MovieGridActivityFragment extends Fragment {
 
@@ -84,6 +84,7 @@ public class MovieGridActivityFragment extends Fragment {
         GridView gridView = (GridView)rootView.findViewById(R.id.grid_view);
         gridView.setAdapter(adapter);
 
+        //Set the onitemclicklistener (would be awesome if RecyclerView had this...)
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -95,10 +96,13 @@ public class MovieGridActivityFragment extends Fragment {
             }
         });
 
+
+        //Friendly reminder to those pulling down my code
         if (getString(R.string.API_KEY).isEmpty()){
             Toast.makeText(getActivity(), "API KEY IS EMPTY", Toast.LENGTH_LONG).show();
         }
 
+        //Initial sort type
         sortType = "popularity.desc";
         FetchMoviesTask task = new FetchMoviesTask();
         task.execute(sortType);
@@ -120,9 +124,12 @@ public class MovieGridActivityFragment extends Fragment {
 
             ArrayList<MovieDO> movieList = new ArrayList<MovieDO>();
 
-            JSONObject forecastJson = new JSONObject(movieString);
-            JSONArray movieArray = forecastJson.getJSONArray("results");
+            JSONObject movieJSON = new JSONObject(movieString);
+            JSONArray movieArray = movieJSON.getJSONArray("results");
 
+
+            //Populate the arrayList by creating movie objects from the JSONObjects
+            //Makes it a lot easier than trying to get values repeatidly out of JSONObjects
             for(int i=0; i<movieArray.length();i++){
                 JSONObject movieObject = movieArray.getJSONObject(i);
 
@@ -136,6 +143,7 @@ public class MovieGridActivityFragment extends Fragment {
 
         }
 
+        //Method from my Sunshine app
         @Override
         protected ArrayList<MovieDO> doInBackground(String... params) {
 
@@ -176,6 +184,7 @@ public class MovieGridActivityFragment extends Fragment {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                     // But it does make debugging a *lot* easier if you print out the completed
                     // buffer for debugging.
+                    //+1 that did make it easier
                     buffer.append(line + "\n");
                 }
 
@@ -186,8 +195,6 @@ public class MovieGridActivityFragment extends Fragment {
                 movieString = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping
-                // to parse it.
                 return null;
             }finally {
                 if (urlConnection != null) {

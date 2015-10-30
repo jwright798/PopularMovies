@@ -30,8 +30,8 @@
 
                 <ImageView
                     android:id="@+id/movie_poster"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="225dp"
+                    android:layout_height="300dp"
                     android:padding="25dp"
                     android:scaleType="fitXY"/>
 

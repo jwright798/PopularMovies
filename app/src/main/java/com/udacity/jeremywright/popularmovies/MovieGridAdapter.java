@@ -16,6 +16,7 @@ import java.util.List;
  */
 public class MovieGridAdapter extends ArrayAdapter<MovieDO> {
 
+    //I test on a Note 5 and Moto G, so this size worked perfectly for me.
     private String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w780/";
 
     public MovieGridAdapter(Context context, List<MovieDO> objects) {
@@ -32,6 +33,7 @@ public class MovieGridAdapter extends ArrayAdapter<MovieDO> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.movie_grid_item, parent, false);
         }
 
+        //Picasso was definitely the way to go here...
         ImageView posterImageView = (ImageView)convertView.findViewById(R.id.grid_image_view);
         String posterPath = BASE_POSTER_URL+movie.getPosterPath();
         Picasso.with(getContext()).load(posterPath).into(posterImageView);

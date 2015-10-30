@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Fragment that displays the details about the movie
  */
 public class MovieDetailActivityFragment extends Fragment {
 
@@ -29,7 +29,10 @@ public class MovieDetailActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
+        //get the movie object out of the intent
         movieDO = getActivity().getIntent().getExtras().getParcelable("movie");
+
+        //Inflate the view and populate textviews
         View detailView = inflater.inflate(R.layout.fragment_movie_detail, container, false);
 
         TextView titleTextView = (TextView)detailView.findViewById(R.id.movie_title);
