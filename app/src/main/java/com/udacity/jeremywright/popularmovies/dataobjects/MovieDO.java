@@ -1,4 +1,4 @@
-package com.udacity.jeremywright.popularmovies;
+package com.udacity.jeremywright.popularmovies.dataobjects;
 
 
 import android.os.Parcel;
@@ -12,6 +12,7 @@ import org.json.JSONObject;
  */
 public class MovieDO implements Parcelable{
 
+    private int movieID;
     private String posterPath;
     private String originalTitle;
     private String overview;
@@ -20,6 +21,7 @@ public class MovieDO implements Parcelable{
     private double voteAverage;
 
     public MovieDO(JSONObject object) throws JSONException{
+        this.movieID = object.getInt("id");
         this.posterPath = object.getString("poster_path");
         this.originalTitle = object.getString("original_title");
         this.overview = object.getString("overview");
@@ -76,6 +78,14 @@ public class MovieDO implements Parcelable{
         this.releaseDate = releaseDate;
     }
 
+    public int getMovieID() {
+        return movieID;
+    }
+
+    public void setMovieID(int movieID) {
+        this.movieID = movieID;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -83,6 +93,7 @@ public class MovieDO implements Parcelable{
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(movieID);
         dest.writeString(posterPath);
         dest.writeString(originalTitle);
         dest.writeString(overview);
@@ -92,6 +103,7 @@ public class MovieDO implements Parcelable{
     }
 
     public MovieDO(Parcel in){
+        this.movieID = in.readInt();
         this.posterPath = in.readString();
         this.originalTitle = in.readString();
         this.overview = in.readString();
@@ -99,6 +111,11 @@ public class MovieDO implements Parcelable{
         this.popularity = in.readDouble();
         this.releaseDate = in.readString();
     }
+
+    public MovieDO() {
+        super();
+    }
+
     public static final Parcelable.Creator<MovieDO> CREATOR
             = new Parcelable.Creator<MovieDO>() {
         public MovieDO createFromParcel(Parcel in) {
@@ -109,4 +126,17 @@ public class MovieDO implements Parcelable{
             return new MovieDO[size];
         }
     };
+
+    @Override
+    public String toString() {
+        return "MovieDO{" +
+                "movieID=" + movieID +
+                ", posterPath='" + posterPath + '\'' +
+                ", originalTitle='" + originalTitle + '\'' +
+                ", overview='" + overview + '\'' +
+                ", releaseDate='" + releaseDate + '\'' +
+                ", popularity=" + popularity +
+                ", voteAverage=" + voteAverage +
+                '}';
+    }
 }

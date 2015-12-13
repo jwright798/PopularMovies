@@ -11,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".MovieGridActivity"
+            android:name=".ui.MovieGridActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -20,12 +20,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MovieDetailActivity"
+            android:name=".ui.MovieDetailActivity"
             android:label="@string/title_activity_movie_detail"
-            android:parentActivityName=".MovieGridActivity" >
+            android:parentActivityName=".ui.MovieGridActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.udacity.jeremywright.popularmovies.MovieGridActivity" />
+                android:value=".ui.MovieGridActivity" />
         </activity>
     </application>
 

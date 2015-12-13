@@ -1,4 +1,4 @@
-package com.udacity.jeremywright.popularmovies;
+package com.udacity.jeremywright.popularmovies.ui;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,6 +8,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
+import com.udacity.jeremywright.popularmovies.R;
+import com.udacity.jeremywright.popularmovies.dataobjects.MovieDO;
 
 import java.util.List;
 

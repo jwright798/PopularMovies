@@ -4,4 +4,6 @@
         app:showAsAction="never" />
     <item android:id="@+id/sort_vote" android:title="@string/SORT_VOTE_AVG"
         app:showAsAction="never" />
+    <item android:id="@+id/sort_favorites" android:title="@string/SORT_FAVORITES"
+        app:showAsAction="never" />
 </menu>

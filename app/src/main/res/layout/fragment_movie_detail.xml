@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.udacity.jeremywright.popularmovies.MovieDetailActivityFragment">
+    tools:context=".ui.MovieDetailActivityFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -54,6 +54,11 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="vote average"/>
+                    <ImageView
+                        android:id="@+id/favorites_image"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src= "@android:drawable/star_big_off"/>
                 </LinearLayout>
             </RelativeLayout>
 
@@ -66,6 +71,37 @@
                 android:paddingBottom="40dp"
                 android:textColor="@android:color/black"
                 android:text="overview text"/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="20dp"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:text="Trailers"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/trailer_layout"
+                android:orientation="vertical"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="20dp"
+                android:textColor="@android:color/black"
+                android:textSize="20sp"
+                android:text="Reviews"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/reviews_layout"
+                android:orientation="vertical"/>
         </LinearLayout>
     </ScrollView>
 
