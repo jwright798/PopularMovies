@@ -35,7 +35,6 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
     private MovieServiceHelper detailHelper = new MovieServiceHelper();
     private MovieDO movieDO;
     private String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w500/";
-    private ArrayList<ReviewDO> reviewList = new ArrayList<ReviewDO>();
     private LinearLayout reviewsLayout;
     private LinearLayout trailersLayout;
     private MovieSQLiteHelper db;
@@ -181,10 +180,12 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
                     }
                 });
 
+                //add new view to overall trailers layout
                 trailersLayout.addView(trailerItemLayout);
             }
         }
         else{
+            //in case of no trailers, need to show a message
             RelativeLayout trailerItemLayout = (RelativeLayout) getActivity().getLayoutInflater().inflate(R.layout.trailer_layout_item, null);
 
             ImageView playButton = (ImageView) trailerItemLayout.findViewById(R.id.trailer_play_button);
@@ -203,7 +204,6 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
     public void reviewResponse(ArrayList<ReviewDO> reviews) {
 
         //get the reviews
-        reviewList = reviews;
         if (reviews != null && reviews.size() > 0){
             //dynamically add reviews to layout
             for (int i = 0; i<reviews.size(); i++) {
@@ -221,6 +221,8 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
             }
         }
         else{
+
+            //in case of no reviews, need to show a message
             LinearLayout reviewLayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.review_layout, null);
             TextView nameTextView = (TextView) reviewLayout.findViewById(R.id.reviewer_name);
             TextView contentTextView = (TextView) reviewLayout.findViewById(R.id.content);
@@ -228,6 +230,7 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
             nameTextView.setText("No reviews available");
             contentTextView.setVisibility(View.GONE);
 
+            //add review to overall reviews layout
             reviewsLayout.addView(reviewLayout);
         }
 

@@ -102,6 +102,7 @@ public class MovieSQLiteHelper extends SQLiteOpenHelper {
                 isFavorite = false;
             }
         }
+        db.close();
         return isFavorite;
     }
 
@@ -129,7 +130,7 @@ public class MovieSQLiteHelper extends SQLiteOpenHelper {
         }
 
         Log.v("getAllMovies()", movies.toString());
-
+         db.close();
         return movies;
     }
 

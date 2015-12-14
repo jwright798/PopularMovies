@@ -1,5 +1,7 @@
 package com.udacity.jeremywright.popularmovies.ui;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -39,6 +41,11 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         serviceHelper.setMovieDelegate(this);
+
+        if (savedInstanceState != null){
+            sortType = savedInstanceState.getString("sort_type");
+            movieDisplayList = savedInstanceState.getParcelableArrayList("movies");
+        }
     }
 
     @Override
@@ -65,13 +72,12 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
         //Don't make an unneccessary api call
         if (!oldSortType.equals(sortType) && !sortType.equalsIgnoreCase("Favorites")){
             serviceHelper.getMovieData(sortType,  getString(R.string.API_KEY));
-        } else if(sortType.equalsIgnoreCase("Favorites")){
-            MovieSQLiteHelper db = new MovieSQLiteHelper(getActivity());
-            //TODO check for empty list
-            ArrayList<MovieDO> movieList = db.getAllMovies();
-            adapter.clear();
-            adapter.addAll(movieList);
-            movieDisplayList = movieList;
+            MovieGridCallback callback = (MovieGridCallback)getActivity();
+            callback.sortTypeChanged();
+        } else if(!oldSortType.equals(sortType) && sortType.equalsIgnoreCase("Favorites")){
+            sortByFavorites();
+            MovieGridCallback callback = (MovieGridCallback)getActivity();
+            callback.sortTypeChanged();
 
         }
 
@@ -110,8 +116,16 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
         }
 
         //Initial sort type
-        sortType = "popularity.desc";
-        serviceHelper.getMovieData(sortType, getString(R.string.API_KEY));
+        if (sortType == null || sortType.isEmpty()) {
+            sortType = "popularity.desc";
+            serviceHelper.getMovieData(sortType, getString(R.string.API_KEY));
+        }
+        else if (sortType.equalsIgnoreCase("popularity.desc") || sortType.equalsIgnoreCase("vote_average.desc")){
+            serviceHelper.getMovieData(sortType, getString(R.string.API_KEY));
+        }
+        else if (sortType.equalsIgnoreCase("Favorites")){
+            sortByFavorites();
+        }
 
         return rootView;
     }
@@ -135,8 +149,40 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
 
     }
 
+    //needed to add callback for tablets
     public interface MovieGridCallback{
         public void movieClicked(MovieDO movie);
+        public void sortTypeChanged();
     }
 
+    public void sortByFavorites(){
+        MovieSQLiteHelper db = new MovieSQLiteHelper(getActivity());
+        ArrayList<MovieDO> movieList = db.getAllMovies();
+        adapter.clear();
+        adapter.addAll(movieList);
+        movieDisplayList = movieList;
+
+        //show a dialog if there are no favorites
+        if(movieList.size() == 0){
+            AlertDialog dialog = new AlertDialog.Builder(getActivity()).create();
+            dialog.setTitle("Alert");
+            dialog.setMessage("Movies you favorite will show up here.");
+            dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList("movieList", movieDisplayList);
+        outState.putString("sort_type", sortType);
+
+    }
 }

@@ -53,7 +53,7 @@ public class MovieGridActivity extends ActionBarActivity implements MovieGridAct
         //implementation from Sunshine app
         if (isTablet){
            Bundle args = new Bundle();
-            args.putParcelable("movie",movie);
+            args.putParcelable("movie", movie);
             Fragment detailFragment = new MovieDetailActivityFragment();
             detailFragment.setArguments(args);
 
@@ -63,6 +63,17 @@ public class MovieGridActivity extends ActionBarActivity implements MovieGridAct
             Intent intent = new Intent(this,MovieDetailActivity.class);
             intent.putExtra("movie", movie);
             startActivity(intent);
+        }
+    }
+
+    //clear detail view (makes changing sort types cleaner)
+    @Override
+    public void sortTypeChanged() {
+        if (isTablet) {
+            Fragment detailFragment = getSupportFragmentManager().findFragmentByTag("detail");
+            if (detailFragment != null) {
+                getSupportFragmentManager().beginTransaction().remove(detailFragment).commit();
+            }
         }
     }
 }
