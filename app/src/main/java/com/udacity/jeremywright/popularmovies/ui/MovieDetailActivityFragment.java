@@ -16,9 +16,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
-import com.udacity.jeremywright.popularmovies.dataobjects.MovieDO;
 import com.udacity.jeremywright.popularmovies.MovieServiceHelper;
 import com.udacity.jeremywright.popularmovies.R;
+import com.udacity.jeremywright.popularmovies.dataobjects.MovieDO;
 import com.udacity.jeremywright.popularmovies.dataobjects.ReviewDO;
 import com.udacity.jeremywright.popularmovies.dataobjects.TrailerDO;
 import com.udacity.jeremywright.popularmovies.sql.MovieSQLiteHelper;
@@ -37,6 +37,8 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
     private String BASE_POSTER_URL = "http://image.tmdb.org/t/p/w500/";
     private LinearLayout reviewsLayout;
     private LinearLayout trailersLayout;
+    private ArrayList<ReviewDO> reviewsList;
+    private ArrayList<TrailerDO> trailerList;
     private MovieSQLiteHelper db;
 
     public MovieDetailActivityFragment() {
@@ -63,6 +65,11 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
         }
         else {
             movieDO = getActivity().getIntent().getExtras().getParcelable("movie");
+        }
+
+        if (savedInstanceState != null){
+            reviewsList = savedInstanceState.getParcelableArrayList("reviews");
+            trailerList = savedInstanceState.getParcelableArrayList("trailers");
         }
 
         //Inflate the view and populate textviews
@@ -134,7 +141,11 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
         reviewsLayout = (LinearLayout) detailView.findViewById(R.id.reviews_layout);
 
         //make the call for reviews
-        detailHelper.getReviews(Integer.toString(movieDO.getMovieID()),getString(R.string.API_KEY));
+        if (reviewsList == null) {
+            detailHelper.getReviews(Integer.toString(movieDO.getMovieID()), getString(R.string.API_KEY));
+        } else {
+            populateReviewsView();
+        }
 
         return detailView;
     }
@@ -147,13 +158,18 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
 
     @Override
     public void trailerResponse(ArrayList<TrailerDO> trailers) {
+        trailerList = trailers;
+        populateTrailerView();
+    }
+
+    public void populateTrailerView(){
         //get the trailers
 
-        if (trailers != null && trailers.size() > 0){
+        if (trailerList != null && trailerList.size() > 0){
 
-            for (int i = 0; i<trailers.size(); i++) {
+            for (int i = 0; i<trailerList.size(); i++) {
 
-                final TrailerDO trailer = trailers.get(i);
+                final TrailerDO trailer = trailerList.get(i);
 
                 RelativeLayout trailerItemLayout = (RelativeLayout) getActivity().getLayoutInflater().inflate(R.layout.trailer_layout_item, null);
 
@@ -168,7 +184,7 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
                         //launch youtube in app (try first) and do generic web afterwards
                         //http://stackoverflow.com/questions/574195/android-youtube-app-play-video-intent
                         try{
-                            Intent nativeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:"+trailer.getKey()));
+                            Intent nativeIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + trailer.getKey()));
                             nativeIntent.putExtra("VIDEO_ID", trailer.getKey());
                             startActivity(nativeIntent);
 
@@ -202,13 +218,24 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
 
     @Override
     public void reviewResponse(ArrayList<ReviewDO> reviews) {
+        reviewsList = reviews;
+        populateReviewsView();
+    }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("trailers", trailerList);
+        outState.putParcelableArrayList("reviews",reviewsList);
+    }
+
+    public void populateReviewsView(){
         //get the reviews
-        if (reviews != null && reviews.size() > 0){
+        if (reviewsList != null && reviewsList.size() > 0){
             //dynamically add reviews to layout
-            for (int i = 0; i<reviews.size(); i++) {
+            for (int i = 0; i<reviewsList.size(); i++) {
 
-                ReviewDO review = reviews.get(i);
+                ReviewDO review = reviewsList.get(i);
 
                 LinearLayout reviewLayout = (LinearLayout) getActivity().getLayoutInflater().inflate(R.layout.review_layout, null);
                 TextView nameTextView = (TextView) reviewLayout.findViewById(R.id.reviewer_name);
@@ -235,6 +262,12 @@ public class MovieDetailActivityFragment extends Fragment implements MovieServic
         }
 
         //make the calls to get the trailers (chose to do sequential calls vs dual calls)
-        detailHelper.getTrailers(Integer.toString(movieDO.getMovieID()),getString(R.string.API_KEY));
+        if (trailerList == null) {
+            detailHelper.getTrailers(Integer.toString(movieDO.getMovieID()), getString(R.string.API_KEY));
+        } else{
+            populateTrailerView();
+        }
+
+
     }
 }

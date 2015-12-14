@@ -29,6 +29,8 @@ import java.util.ArrayList;
 public class MovieGridActivityFragment extends Fragment implements MovieServiceHelper.MovieServiceDelegate {
 
     private MovieServiceHelper serviceHelper = new MovieServiceHelper();
+    private static final String SORT_TYPE = "sort_type";
+    private static final String MOVIE_LIST = "movieList";
     ArrayList<MovieDO> movieDisplayList;
     MovieGridAdapter adapter;
     String sortType;
@@ -42,10 +44,6 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
         setHasOptionsMenu(true);
         serviceHelper.setMovieDelegate(this);
 
-        if (savedInstanceState != null){
-            sortType = savedInstanceState.getString("sort_type");
-            movieDisplayList = savedInstanceState.getParcelableArrayList("movies");
-        }
     }
 
     @Override
@@ -115,16 +113,25 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
             Toast.makeText(getActivity(), "API KEY IS EMPTY", Toast.LENGTH_LONG).show();
         }
 
-        //Initial sort type
-        if (sortType == null || sortType.isEmpty()) {
-            sortType = "popularity.desc";
-            serviceHelper.getMovieData(sortType, getString(R.string.API_KEY));
-        }
-        else if (sortType.equalsIgnoreCase("popularity.desc") || sortType.equalsIgnoreCase("vote_average.desc")){
-            serviceHelper.getMovieData(sortType, getString(R.string.API_KEY));
-        }
-        else if (sortType.equalsIgnoreCase("Favorites")){
-            sortByFavorites();
+        //Fix for the savedInstanceState (thanks to my reviewer for the help)
+        if (savedInstanceState == null) {
+
+            //Initial sort type
+            if (sortType == null || sortType.isEmpty()) {
+                sortType = "popularity.desc";
+                serviceHelper.getMovieData(sortType, getString(R.string.API_KEY));
+            } else if (sortType.equalsIgnoreCase("popularity.desc") || sortType.equalsIgnoreCase("vote_average.desc")) {
+                serviceHelper.getMovieData(sortType, getString(R.string.API_KEY));
+            } else if (sortType.equalsIgnoreCase("Favorites")) {
+                sortByFavorites();
+            }
+        } else{
+            adapter.clear();
+            sortType = savedInstanceState.getString(SORT_TYPE);
+            movieDisplayList = savedInstanceState.getParcelableArrayList(MOVIE_LIST);
+            adapter.addAll(movieDisplayList);
+            adapter.notifyDataSetChanged();
+            checkifMovieListisEmpty();
         }
 
         return rootView;
@@ -136,7 +143,9 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
             adapter.clear();
             adapter.addAll(movieList);
             movieDisplayList = movieList;
+
         }
+        checkifMovieListisEmpty();
     }
 
     @Override
@@ -177,12 +186,27 @@ public class MovieGridActivityFragment extends Fragment implements MovieServiceH
         }
     }
 
+    public void checkifMovieListisEmpty(){
+        if (movieDisplayList == null || movieDisplayList.isEmpty()){
+            AlertDialog dialog = new AlertDialog.Builder(getActivity()).create();
+            dialog.setTitle("Error");
+            dialog.setMessage("No movies found. Try sorting by a different type");
+            dialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            dialog.show();
+        }
+    }
+
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelableArrayList("movieList", movieDisplayList);
-        outState.putString("sort_type", sortType);
-
+        outState.putParcelableArrayList(MOVIE_LIST, movieDisplayList);
+        outState.putString(SORT_TYPE, sortType);
     }
+
 }
